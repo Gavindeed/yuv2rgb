@@ -30,7 +30,7 @@ void YUV::Append(char *filename)
     sum += fwrite(Y, 1, height*width, output);
     sum += fwrite(U, 1, height*width/4, output);
     sum += fwrite(V, 1, height*width/4, output);
-    printf("write %d %d\n", ++times, sum);
+    //printf("write %d %d\n", ++times, sum);
     fclose(output);
 }
 
