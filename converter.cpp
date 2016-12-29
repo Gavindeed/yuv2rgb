@@ -18,10 +18,12 @@ Converter::yuv2rgb(YUV *frame, RGB *group)
     {
         for(int j = 0; j < w; j++)
         {
-            //printf("%d %d\n", i, j);
-            group[i*w+j].R = check(1.164383 * (frame->Y[i*w+j] - 16) + 1.596027 * (frame->V[i/2*w/2+j/2] - 128));
-            group[i*w+j].G = check(1.164383 * (frame->Y[i*w+j] - 16) - 0.391762 * (frame->U[i/2*w/2+j/2] - 128) - 0.812968 * (frame->V[i/2*w/2+j/2] - 128));
-            group[i*w+j].B = check(1.164383 * (frame->Y[i*w+j] - 16) + 2.017232 * (frame->U[i/2*w/2+j/2] - 128));
+            //group[i*w+j].R = check(1.164383 * (frame->Y[i*w+j] - 16) + 1.596027 * (frame->V[i/2*w/2+j/2] - 128));
+            //group[i*w+j].G = check(1.164383 * (frame->Y[i*w+j] - 16) - 0.391762 * (frame->U[i/2*w/2+j/2] - 128) - 0.812968 * (frame->V[i/2*w/2+j/2] - 128));
+            //group[i*w+j].B = check(1.164383 * (frame->Y[i*w+j] - 16) + 2.017232 * (frame->U[i/2*w/2+j/2] - 128));
+            group[i*w+j].R = check((298 * (frame->Y[i*w+j] - 16) + 409 * (frame->V[i/2*w/2+j/2] - 128)) >> 8);
+            group[i*w+j].G = check((298 * (frame->Y[i*w+j] - 16) - 100 * (frame->U[i/2*w/2+j/2] - 128) - 208 * (frame->V[i/2*w/2+j/2] - 128)) >> 8);
+            group[i*w+j].B = check((298 * (frame->Y[i*w+j] - 16) + 516 * (frame->U[i/2*w/2+j/2] - 128)) >> 8);
         }
     }
 }
@@ -35,9 +37,12 @@ Converter::rgb2yuv(YUV *frame, RGB* group)
     {
         for(int j = 0; j < w; j++)
         {
-            frame->Y[i*w+j] = 0.256788 * group[i*w+j].R + 0.504129 * group[i*w+j].G + 0.097906 * group[i*w+j].B + 16;
-            frame->U[i/2*w/2+j/2] = -0.148233 * group[i*w+j].R - 0.290933 * group[i*w+j].G + 0.439216 * group[i*w+j].B + 128;
-            frame->V[i/2*w/2+j/2] = 0.439216 * group[i*w+j].R -0.367788 * group[i*w+j].G - 0.071427 * group[i*w+j].B + 128;
+            //frame->Y[i*w+j] = 0.256788 * group[i*w+j].R + 0.504129 * group[i*w+j].G + 0.097906 * group[i*w+j].B + 16;
+            //frame->U[i/2*w/2+j/2] = -0.148233 * group[i*w+j].R - 0.290933 * group[i*w+j].G + 0.439216 * group[i*w+j].B + 128;
+            //frame->V[i/2*w/2+j/2] = 0.439216 * group[i*w+j].R -0.367788 * group[i*w+j].G - 0.071427 * group[i*w+j].B + 128;
+            frame->Y[i*w+j] = ((66 * group[i*w+j].R + 129 * group[i*w+j].G + 25 * group[i*w+j].B) >> 8) + 16;
+            frame->U[i/2*w/2+j/2] = ((-38 * group[i*w+j].R - 74 * group[i*w+j].G + 112 * group[i*w+j].B) >> 8) + 128;
+            frame->V[i/2*w/2+j/2] = ((112 * group[i*w+j].R - 94 * group[i*w+j].G - 18 * group[i*w+j].B) >> 8) + 128;
         }
     }
 }
